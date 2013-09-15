@@ -106,7 +106,11 @@ public class LiveComsServer {
 	public void routeChannels(int[] ids) throws JSONException, NotConnectedException, RequestJSONInvalidException, ChannelIDInvalidException, ChannelNotVerifiedException, RequiresMoreChannelsException, UnknownException {
 		JSONArray channels = new JSONArray();
 		for(int i=0; i<ids.length; i++) {
-			channels.put(ids[i]);
+			JSONObject a = new JSONObject();
+			a.put("id", ids[i]);
+			// TODO: allow user to specify this value. basically I forgot about it
+			a.put("listenOnly", false);
+			channels.put(a);
 		}
 		JSONObject request = new JSONObject();
 		request.put("action", "routeChannels");
@@ -122,9 +126,6 @@ public class LiveComsServer {
 			throw (new ChannelNotVerifiedException());
 		}
 		else if (response.getInt("code") == 104) {
-			throw (new RequestJSONInvalidException());
-		}
-		else if (response.getInt("code") == 105) {
 			throw (new RequiresMoreChannelsException());
 		}
 		else if (response.getInt("code") != 0) {
@@ -132,10 +133,14 @@ public class LiveComsServer {
 		}
 	}
 	
-	public void sendToHolding(int id) throws JSONException, NotConnectedException, RequestJSONInvalidException, ChannelIDInvalidException, ChannelNotVerifiedException, UnknownException {
+	public void sendToHolding(int[] ids) throws JSONException, NotConnectedException, RequestJSONInvalidException, ChannelIDInvalidException, ChannelNotVerifiedException, UnknownException {
+		JSONArray channels = new JSONArray();
+		for(int i=0; i<ids.length; i++) {
+			channels.put(ids[i]);
+		}
 		JSONObject request = new JSONObject();
 		request.put("action", "sendToHolding");
-		request.put("id", id);
+		request.put("channels", channels);
 		JSONObject response = socketManager.sendRequest(request);
 		if (response.getInt("code") == 101) {
 			throw (new RequestJSONInvalidException());
