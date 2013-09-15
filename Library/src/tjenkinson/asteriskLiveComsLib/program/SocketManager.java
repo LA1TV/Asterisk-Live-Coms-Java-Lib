@@ -149,7 +149,6 @@ public class SocketManager {
     
     public JSONObject sendRequest(JSONObject request) throws JSONException, NotConnectedException {
     	synchronized(socketLock) {
-	    	System.out.println("sending request "+request.toString());
 	    	out.println(request.toString());
 	    	try {
 				return new JSONObject(incomingResponseIn.readLine());
