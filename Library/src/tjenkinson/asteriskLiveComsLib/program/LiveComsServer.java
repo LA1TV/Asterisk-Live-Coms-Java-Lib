@@ -67,6 +67,26 @@ public class LiveComsServer {
 		return channels;
 	}
 	
+	public int[][] getGroups() throws JSONException, NotConnectedException, UnknownException {
+		JSONObject request = new JSONObject();
+		request.put("action", "getRoomGroups");
+		JSONObject response = socketManager.sendRequest(request);
+		if (response.getInt("code") != 0) {
+			throw(new UnknownException());
+		}
+		JSONArray groupsJSON = response.getJSONArray("payload");
+		int[][] groups = new int[groupsJSON.length()][];
+		for(int i=0; i<groupsJSON.length(); i++) {
+			JSONArray groupJSON = groupsJSON.getJSONArray(i);
+			int[] group = new int[groupJSON.length()];
+			for(int j=0; j<groupJSON.length(); j++) {
+				group[j] = groupJSON.getInt(j);
+			}
+			groups[i] = group;
+		}
+		return groups;
+	}
+	
 	public void grantAccess(int id, boolean enableHoldMusic) throws JSONException, NotConnectedException, UnknownException, RequestJSONInvalidException, ChannelIDInvalidException, AccessAlreadyGrantedException {
 		JSONObject request = new JSONObject();
 		request.put("action", "grantAccess");
